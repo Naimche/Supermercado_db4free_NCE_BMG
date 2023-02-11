@@ -1,13 +1,13 @@
 package model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "clientes")
 public class Cliente extends Persona {
 
     // Atributos de la clase
-    private double dinero;
     @Id
     @Column(name = "dni",length = 10)
 
@@ -20,6 +20,10 @@ public class Cliente extends Persona {
     private char sexo;
     @Column(name = "direccion")
     private String direccion;
+    @Column(name = "dinero")
+    private double dinero;
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    private List<Pedido> pedidos;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "idAfiliacion")

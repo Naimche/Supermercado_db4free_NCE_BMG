@@ -1,6 +1,7 @@
 package model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "inventario")
@@ -20,16 +21,20 @@ public class Producto {
     private double precioVenta;
     @Column(name = "cantidad")
     private int cantidad;
+    @ManyToMany(mappedBy = "productos")
+    private List<Pedido> pedidos;
 
 
 
     // Constructor que inicializa los atributos del producto
-    public Producto(String nombre, double precioCosto, double precioVenta) {
+    public Producto (String nombre, double precioCosto, double precioVenta, int cantidad) {
         // Asignando los valores pasados como parámetros a los atributos correspondientes
         this.nombre = nombre;
         this.precioCosto = precioCosto;
         this.precioVenta = precioVenta;
+        this.cantidad = cantidad;
     }
+
 
     // Método para obtener el nombre del producto
     public String getNombre() {
@@ -59,5 +64,13 @@ public class Producto {
     // Método para asignar un nuevo precio de venta al producto
     public void setPrecioVenta(double precioVenta) {
         this.precioVenta = precioVenta;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 }

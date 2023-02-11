@@ -8,6 +8,7 @@ import java.util.List;
 public class Afiliacion {
     @Id
     @Column(name = "idAfiliacion")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
 

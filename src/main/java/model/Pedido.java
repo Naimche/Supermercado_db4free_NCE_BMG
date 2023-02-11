@@ -3,34 +3,41 @@ package model;
 
 import interfaces.Descuento;
 
+import javax.persistence.*;
 import java.util.List;
 
-public class Pedido{
-    private Descuento descuento;
-    private final Cliente cliente;
-    private final Empleado empleado;
-    private List<Producto> compra;
-    //Constructor principal
-    public Pedido(Cliente cliente, Empleado empleado, List<Producto> compra, Inventario inventario) throws Exception {
-        if (comprobarInventario(compra, inventario)) {
+
+@Entity
+@Table(name = "pedidos")
+public class Pedido {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idPedido")
+    private int idPedido;
+    @ManyToOne
+    @JoinColumn(name = "dniCliente")
+    private Cliente cliente;
+    @ManyToOne
+    @JoinColumn(name = "idEmpleado")
+    private Empleado empleado;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "pedido_producto", joinColumns = @JoinColumn(name = "idPedido"), inverseJoinColumns = @JoinColumn(name = "id"))
+    private List<Producto> productos;
+    @ManyToOne
+    @JoinColumn(name = "idDescuento")
+    private Descuentos descuento;
+    public Pedido(Cliente cliente, Empleado empleado, List<Producto> compra ) throws Exception {
             this.cliente = cliente;
             this.empleado = empleado;
-            this.compra = compra;
-        } else {
-            throw new Exception("Alguno de los productos no se encuentra en inventario");
-        }
+            this.productos = compra;
     }
 
     // Constructor secundario que recibe un objeto de tipo Descuento
-    public Pedido(Cliente cliente, Empleado empleado, List<Producto> compra, Inventario inventario, Descuento descuento) throws Exception {
-        if (comprobarInventario(compra, inventario)) {
+    public Pedido(Cliente cliente, Empleado empleado, List<Producto> compra, Descuentos descuento) throws Exception {
             this.cliente = cliente;
             this.empleado = empleado;
-            this.compra = compra;
+            this.productos = compra;
             this.descuento = descuento;
-        } else {
-            throw new Exception("Alguno de los productos no se encuentra en inventario");
-        }
     }
 
     public Cliente getCliente() {
@@ -39,8 +46,8 @@ public class Pedido{
 
     public double calcularTotalDelPedido(){
         Double precio=0.0;
-        for (int i =0;i<=compra.size();i++){
-            precio+=compra.get(i).getPrecioVenta();
+        for (int i =0;i<=productos.size();i++){
+            precio+=productos.get(i).getPrecioVenta();
         }
         if (descuento!=null) return descuento.aplicarDescuento(precio);
         else return precio;

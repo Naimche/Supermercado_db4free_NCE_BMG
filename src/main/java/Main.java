@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.Map;
 import java.util.Properties;
 
 public class Main {
@@ -27,9 +28,10 @@ public class Main {
                 .applySettings(properties)
                 .build();
 
-        EntityManagerFactory entityManagerFactory = new HibernatePersistenceProvider()
-                .createEntityManagerFactory("supermercado", properties);
+        EntityManager manager = new HibernatePersistenceProvider()
+                .createEntityManagerFactory("supermercado", properties).createEntityManager();
 
-        
     }
+
+
 }

@@ -1,9 +1,7 @@
 package model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Clase Empleado que hereda de la clase Persona, contiene información adicional de un empleado
@@ -12,10 +10,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "empleados")
 public class Empleado extends Persona {
-    private double sueldo;
-    private int idEmpleado;
     @Id
-    @Column(name = "dni",length = 30)
+    @Column(name = "dni",length = 10)
     private String dni;
     @Column(name = "nombre")
     private String nombre;
@@ -25,6 +21,15 @@ public class Empleado extends Persona {
     private char sexo;
     @Column(name = "direccion")
     private String direccion;
+    @Column(name = "sueldo")
+    private double sueldo;
+    // Sueldo del empleado
+    @Column(name = "idEmpleado")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idEmpleado;
+    // Id del empleado
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
+    private List<Pedido> pedidos;
 
     public Empleado(String dni, String nombre, Integer edad, Character sexo, String direccion, Double sueldo, Integer id) {
         super();

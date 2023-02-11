@@ -1,11 +1,13 @@
 package model;
 
+import interfaces.Descuento;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "descuentos")
-public class Descuentos {
+public class Descuentos implements Descuento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -34,5 +36,11 @@ public class Descuentos {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
+    }
+
+    @Override
+    public double aplicarDescuento(double monto) {
+        // Aplicando el descuento del porcentaje especificado
+        return monto - (monto * porcentajeDescuento / 100);
     }
 }
