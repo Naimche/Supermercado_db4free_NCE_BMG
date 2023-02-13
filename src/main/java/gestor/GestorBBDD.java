@@ -1,16 +1,48 @@
+package gestor;
+
 import model.Cliente;
+import model.ClienteLogin;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Environment;
+import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.hibernate.service.ServiceRegistry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
 
 public class GestorBBDD {
-    private EntityManager manager;
+    public EntityManager initialize(){
+        Properties properties = new Properties();
+        properties.setProperty(Environment.DRIVER, "com.mysql.jdbc.Driver");
+        properties.setProperty(Environment.URL, "jdbc:mysql://db4free.net:3306/equipo7hlc");
+        properties.setProperty(Environment.USER, "equipo7hlc");
+        properties.setProperty(Environment.PASS, "equipo7hlc");
+        properties.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
+        properties.setProperty(Environment.SHOW_SQL, "true");
+        properties.setProperty(Environment.HBM2DDL_AUTO, "create-drop");
+
+
+
+
+        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                .applySettings(properties)
+                .build();
+
+        EntityManager manager = new HibernatePersistenceProvider()
+                .createEntityManagerFactory("supermercado", properties).createEntityManager();
+
+
+        //Entorno de pruebas
+
+        return manager;
+    }
+    private EntityManager manager = initialize();
     private EntityTransaction transaction=manager.getTransaction();
 
-    public GestorBBDD(EntityManager manager) {
+    public GestorBBDD() {
         this.manager = manager;
     }
     public Boolean insertarCliente(model.Cliente cliente){
@@ -24,6 +56,7 @@ public class GestorBBDD {
             return false;
         }
     }
+
     public Boolean insertarEmpleado(model.Empleado empleado){
         try{
             transaction.begin();
@@ -151,6 +184,16 @@ public class GestorBBDD {
             return false;
         }
     }
+
+    //comprobar el cliente login con su contraseña
+    public Cliente selectClienteLoginByDni(String dni){
+        Cliente cliente = manager.find(Cliente.class, dni);
+        if (cliente == null) {
+            System.out.println("El cliente con DNI " + dni + " no existe en la base de datos.");
+        }
+        return cliente;
+    }
+
     public Boolean deleteProducto(model.Producto producto){
         try{
             transaction.begin();

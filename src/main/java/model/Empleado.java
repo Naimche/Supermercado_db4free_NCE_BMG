@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "empleados")
 public class Empleado extends Persona {
     @Id
-    @Column(name = "dni",length = 10)
+    @Column(name = "dni",length = 9)
     private String dni;
     @Column(name = "nombre")
     private String nombre;

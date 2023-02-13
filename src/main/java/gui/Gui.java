@@ -15,10 +15,8 @@ public class Gui {
 
     public void start() {
         try {
-            Cliente cliente = new Cliente("12345678A","Naim",12,'H',12.0,"adas");
+            Cliente cliente = new Cliente("12345678A","Naim",12,'H',12.0,"adas","1234");
             gestorBBDD.insertarCliente(cliente);
-            ClienteLogin cl = new ClienteLogin("12345678A", "12345678A");
-            gestorBBDD.insertarClienteLogin(cl);
         }catch (Exception e){
             System.out.println("Error al insertar clienteLogin");
         }

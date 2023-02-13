@@ -21,7 +21,7 @@ public class Pedido {
     @JoinColumn(name = "idEmpleado")
     private Empleado empleado;
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "pedido_producto", joinColumns = @JoinColumn(name = "idPedido"), inverseJoinColumns = @JoinColumn(name = "id"))
+    @JoinTable(name = "pedido_inventario", joinColumns = @JoinColumn(name = "idPedido"), inverseJoinColumns = @JoinColumn(name = "id"))
     private List<Producto> productos;
     @ManyToOne
     @JoinColumn(name = "idDescuento")
@@ -51,10 +51,6 @@ public class Pedido {
         }
         if (descuento!=null) return descuento.aplicarDescuento(precio);
         else return precio;
-    }
-    public boolean comprobarInventario(List<Producto> compra, Inventario inventario) {
-
-        return true;
     }
 
 }
