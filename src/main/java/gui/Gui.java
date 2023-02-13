@@ -25,8 +25,8 @@ public class Gui {
         int opcion = 0;
         do {
             System.out.println("----- Menú Principal -----");
-            System.out.println("1. Login cliente");
-            System.out.println("2. Login empleado");
+            System.out.println("1. Cliente");
+            System.out.println("2. Empleado");
             System.out.println("3. Salir");
             System.out.print("Seleccione una opción: ");
 

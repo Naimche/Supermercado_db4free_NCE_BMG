@@ -28,6 +28,9 @@ public class Empleado extends Persona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idEmpleado;
     // Id del empleado
+    // crear una contraseña para el empleado
+    @Column(name = "contrasena")
+    private String contrasena;
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 
