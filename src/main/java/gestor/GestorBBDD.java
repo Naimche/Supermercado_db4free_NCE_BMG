@@ -2,19 +2,16 @@ import model.Cliente;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 
 public class GestorBBDD {
-    private Properties properties;
-    private EntityManager manager = Persistence.createEntityManagerFactory("supermercado", properties).createEntityManager();
+    private EntityManager manager;
     private EntityTransaction transaction=manager.getTransaction();
 
-    public GestorBBDD(Properties properties) {
-        this.properties = properties;
+    public GestorBBDD(EntityManager manager) {
+        this.manager = manager;
     }
     public Boolean insertarCliente(model.Cliente cliente){
         try{
@@ -64,7 +61,11 @@ public class GestorBBDD {
         return manager.createQuery("SELECT c FROM Cliente c", Cliente.class).getResultList();
     }
     public Cliente selectClienteByDni(String dni){
-        return manager.find(Cliente.class, dni);
+        Cliente cliente = manager.find(Cliente.class, dni);
+        if (cliente == null) {
+            System.out.println("El cliente con DNI " + dni + " no existe en la base de datos.");
+        }
+        return cliente;
     }
     public List<model.Empleado>selectAllEmpleados(){
         return manager.createQuery("SELECT e FROM Empleado e", model.Empleado.class).getResultList();

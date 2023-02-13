@@ -11,6 +11,7 @@
         <class>model.Afiliacion</class>
         <class>model.Descuentos</class>
         <class>model.Pedido</class>
+        <class>model.ClienteLogin</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>

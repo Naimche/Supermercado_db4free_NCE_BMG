@@ -31,7 +31,7 @@ public class Empleado extends Persona {
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 
-    public Empleado(String dni, String nombre, Integer edad, Character sexo, String direccion, Double sueldo, Integer id) {
+    public Empleado(String dni, String nombre, Integer edad, Character sexo, String direccion, Double sueldo) {
         super();
     }
 
