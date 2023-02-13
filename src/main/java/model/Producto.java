@@ -6,10 +6,6 @@ import java.util.List;
 @Entity
 @Table(name = "inventario")
 public class Producto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
     // Atributo para almacenar el nombre del producto
     @Column(name = "nombre")
     private String nombre;
@@ -23,6 +19,10 @@ public class Producto {
     private int cantidad;
     @ManyToMany(mappedBy = "productos")
     private List<Pedido> pedidos;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
 
 

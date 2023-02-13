@@ -19,7 +19,7 @@ public class Pedido {
     private Cliente cliente;
     @ManyToOne
     @JoinColumn(name = "idEmpleado")
-    private Empleado empleado;
+    private Empleado empleado=null;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "pedido_inventario", joinColumns = @JoinColumn(name = "idPedido"), inverseJoinColumns = @JoinColumn(name = "id"))
     private List<Producto> productos;

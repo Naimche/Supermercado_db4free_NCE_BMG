@@ -36,8 +36,14 @@ public class Empleado extends Persona {
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 
-    public Empleado(String dni, String nombre, Integer edad, Character sexo, String direccion, Double sueldo) {
-        super();
+    public Empleado(String dni, String nombre, Integer edad, Character sexo, String direccion, Double sueldo,String contrasena) throws Exception {
+        this.dni = dni;
+        this.nombre = nombre;
+        this.edad = edad;
+        this.sexo = sexo;
+        this.direccion = direccion;
+        this.sueldo = sueldo;
+        this.contrasena = Encriptacion.encriptar(contrasena);
     }
 
     /**
@@ -74,6 +80,13 @@ public class Empleado extends Persona {
      */
     public void setIdEmpleado(int idEmpleado) {
         this.idEmpleado = idEmpleado;
+    }
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     /**

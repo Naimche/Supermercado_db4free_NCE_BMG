@@ -115,7 +115,7 @@ public class GestorBBDD {
     public List<model.Producto>selectAllProductos(){
         return manager.createQuery("SELECT p FROM Producto p", model.Producto.class).getResultList();
     }
-    public model.Producto selectProductoById(String id){
+    public model.Producto selectProductoById(int id){
         return manager.find(model.Producto.class, id);
     }
     public List<model.Pedido>selectAllPedidos(){
