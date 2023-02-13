@@ -2,16 +2,19 @@ import model.Cliente;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 
 public class GestorBBDD {
-    private EntityManager manager;
+    private Properties properties;
+    private EntityManager manager = Persistence.createEntityManagerFactory("supermercado", properties).createEntityManager();
     private EntityTransaction transaction=manager.getTransaction();
 
-    public GestorBBDD(EntityManager manager) {
-        this.manager = manager;
+    public GestorBBDD(Properties properties) {
+        this.properties = properties;
     }
     public Boolean insertarCliente(model.Cliente cliente){
         try{
@@ -169,5 +172,64 @@ public class GestorBBDD {
             return false;
         }
     }
+    public boolean crearTabla(String nombreTabla, Map<String, String> campos){
+        try{
+            transaction.begin();
+            StringBuilder query = new StringBuilder("CREATE TABLE " + nombreTabla + " (");
+            for (Map.Entry<String, String> entry : campos.entrySet()) {
+                query.append(entry.getKey()).append(" ").append(entry.getValue()).append(", ");
+            }
+            query = new StringBuilder(query.substring(0, query.length() - 2));
+            query.append(")");
+            manager.createNativeQuery(query.toString()).executeUpdate();
+            transaction.commit();
+            return true;
+        }catch (Exception e){
+            transaction.rollback();
+            return false;
+        }
+    }
+    public Boolean insertarFila(String nombreTabla,  Object valor){
+        try{
+            transaction.begin();
+            manager.createNativeQuery("INSERT INTO "+nombreTabla+"  VALUES ("+valor+")").executeUpdate();
+            transaction.commit();
+            return true;
+        }catch (Exception e){
+            transaction.rollback();
+            return false;
+        }
+    }
+    public List selectAll(String nombreTabla){
+        return manager.createNativeQuery("SELECT * FROM "+nombreTabla).getResultList();
+    }
+   public List selectBy(String nombreTabla, String campo, Object valor){
+        return manager.createNativeQuery("SELECT * FROM "+nombreTabla+" WHERE "+campo+" = "+valor).getResultList();
+    }
+    public Boolean update(String nombreTabla, String campo, Object valor, String campoWhere, Object valorWhere){
+        try{
+            transaction.begin();
+            manager.createNativeQuery("UPDATE "+nombreTabla+" SET "+campo+" = "+valor+" WHERE "+campoWhere+" = "+valorWhere).executeUpdate();
+            transaction.commit();
+            return true;
+        }catch (Exception e){
+            transaction.rollback();
+            return false;
+        }
+    }
+    public Boolean delete(String nombreTabla, String campo, Object valor){
+        try{
+            transaction.begin();
+            manager.createNativeQuery("DELETE FROM "+nombreTabla+" WHERE "+campo+" = "+valor).executeUpdate();
+            transaction.commit();
+            return true;
+        }catch (Exception e){
+            transaction.rollback();
+            return false;
+        }
+    }
 
+    public void close(){
+        manager.close();
+    }
 }
