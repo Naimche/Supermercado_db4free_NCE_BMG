@@ -1,5 +1,7 @@
 package model;
 
+import autentificacion.Encriptacion;
+
 import javax.persistence.*;
 import java.util.List;
 

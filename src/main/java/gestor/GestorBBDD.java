@@ -1,6 +1,8 @@
 package gestor;
 
 import model.Cliente;
+import model.Empleado;
+import model.Producto;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
@@ -104,7 +106,11 @@ public class GestorBBDD {
         return manager.createQuery("SELECT e FROM Empleado e", model.Empleado.class).getResultList();
     }
     public model.Empleado selectEmpleadoByDni(String dni){
-        return manager.find(model.Empleado.class, dni);
+        Empleado empleado = manager.find(Empleado.class, dni);
+        if (empleado == null) {
+            System.out.println("El empleado con DNI " + dni + " no existe en la base de datos.");
+        }
+        return empleado;
     }
     public List<model.Producto>selectAllProductos(){
         return manager.createQuery("SELECT p FROM Producto p", model.Producto.class).getResultList();
@@ -271,9 +277,29 @@ public class GestorBBDD {
             transaction.rollback();
             return false;
         }
-    }
 
+    }
+    public Boolean updateProductoStock(int id, int cantidad){
+        try{
+            transaction.begin();
+            manager.createNativeQuery("UPDATE Producto SET stock = stock - "+cantidad+" WHERE id = "+id).executeUpdate();
+            transaction.commit();
+            return true;
+        }catch (Exception e){
+            transaction.rollback();
+            return false;
+        }
+    }
     public void close(){
         manager.close();
+    }
+
+    public String verProductos() {
+        String productos = "";
+        for (Producto p : selectAllProductos()) {
+            productos += p.getId() +".- "+p.getNombre() + ", Precio: "+p.getPrecioVenta() + "€" + "\n";
+        }
+        return productos;
+
     }
 }

@@ -40,6 +40,9 @@ public class Producto {
     public String getNombre() {
         return nombre;
     }
+    public int getId() {
+        return id;
+    }
 
     // Método para obtener el precio de costo del producto
     public double getPrecioCosto() {

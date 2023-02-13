@@ -64,11 +64,11 @@ public class Cliente extends Persona {
 
     // Getter y setters
 
-    public double getdinero() {
+    public double getDinero() {
         return dinero;
     }
 
-    public void setDinero(int dinero) {
+    public void setDinero(double dinero) {
         this.dinero = dinero;
     }
 
