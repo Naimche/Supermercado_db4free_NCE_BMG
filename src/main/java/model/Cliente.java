@@ -24,6 +24,8 @@ public class Cliente extends Persona {
     private double dinero;
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
+    @OneToOne(mappedBy = "cliente")
+    private ClienteLogin clienteLogin;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "idAfiliacion")
@@ -31,7 +33,12 @@ public class Cliente extends Persona {
 
     // Constructor
     public Cliente(String dni, String nombre, Integer edad, Character sexo, Double dinero, String direccion) {
-        super();
+        this.dni = dni;
+        this.nombre = nombre;
+        this.edad = edad;
+        this.sexo = sexo;
+        this.dinero = dinero;
+        this.direccion = direccion;
 
     }
 
@@ -66,5 +73,9 @@ public class Cliente extends Persona {
 
     public boolean pagarPedido(Double pago) {
         return !(dinero - pago < 0);
+    }
+
+    public String getDni() {
+        return dni;
     }
 }
