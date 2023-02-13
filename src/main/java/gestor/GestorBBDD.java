@@ -1,7 +1,6 @@
 package gestor;
 
 import model.Cliente;
-import model.ClienteLogin;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
@@ -10,6 +9,7 @@ import org.hibernate.service.ServiceRegistry;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 
