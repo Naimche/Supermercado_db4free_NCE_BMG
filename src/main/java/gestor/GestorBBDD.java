@@ -1,7 +1,6 @@
 package gestor;
 
 import model.Cliente;
-import model.ClienteLogin;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
@@ -56,17 +55,7 @@ public class GestorBBDD {
             return false;
         }
     }
-    public boolean insertarClienteLogin(model.ClienteLogin clienteLogin){
-        try{
-            transaction.begin();
-            manager.persist(clienteLogin);
-            transaction.commit();
-            return true;
-        }catch (Exception e){
-            transaction.rollback();
-            return false;
-        }
-    }
+
     public Boolean insertarEmpleado(model.Empleado empleado){
         try{
             transaction.begin();
@@ -196,8 +185,8 @@ public class GestorBBDD {
     }
 
     //comprobar el cliente login con su contraseña
-    public ClienteLogin selectClienteLoginByDni(String dni){
-        ClienteLogin cliente = manager.find(ClienteLogin.class, dni);
+    public Cliente selectClienteLoginByDni(String dni){
+        Cliente cliente = manager.find(Cliente.class, dni);
         if (cliente == null) {
             System.out.println("El cliente con DNI " + dni + " no existe en la base de datos.");
         }
