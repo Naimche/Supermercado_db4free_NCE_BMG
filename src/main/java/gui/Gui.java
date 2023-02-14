@@ -257,12 +257,12 @@ public class Gui {
             System.out.println("4. Salir");
             if (!listaCompraLocal.isEmpty()) {
                 System.out.println("5. Pagar");
-                System.out.println("----- Total: " + calcularPrecioTotal(listaCompraLocal)+ "€ -----");
+                System.out.println("----- Total: " + calcularPrecioTotal(listaCompraLocal) + "€ -----");
             }
             System.out.print("Seleccione una opción: ");
 
             opcion = sc.nextInt();
-            if(!listaCompraLocal.isEmpty()){
+            if (!listaCompraLocal.isEmpty()) {
                 switch (opcion) {
                     case 1:
                         System.out.println("----- Productos -----");
@@ -284,15 +284,15 @@ public class Gui {
                         String respuesta = sc.nextLine().toUpperCase();
                         if (respuesta.equals("S") || respuesta.equals("SI")) {
                             String contrasena = sc.nextLine();
-                            if (cliente.getContrasena().equals(Encriptacion.encriptar(contrasena))){
-                                if (cliente.getDinero() >= calcularPrecioTotal(listaCompraLocal)){
+                            if (cliente.getContrasena().equals(Encriptacion.encriptar(contrasena))) {
+                                if (cliente.getDinero() >= calcularPrecioTotal(listaCompraLocal)) {
                                     gestorBBDD.updateCliente(cliente);
 
                                     System.out.println("Compra realizada con éxito.");
                                     cliente.setDinero(cliente.getDinero() - calcularPrecioTotal(listaCompraLocal));
                                 }
-                                pagar(cliente, listaCompraLocal);
-                            }else {
+                                //pagar(cliente, listaCompraLocal);
+                            } else {
                                 System.out.println("Contraseña incorrecta.");
                             }
 
@@ -304,7 +304,7 @@ public class Gui {
                     default:
                         System.out.println("Opción inválida, seleccione una opción válida.");
                 }
-            }else {
+            } else {
                 switch (opcion) {
                     case 1:
                         System.out.println("----- Productos -----");
@@ -324,7 +324,8 @@ public class Gui {
                 }
             }
 
-        } while (opcion != 4); return true;
+        } while (opcion != 4);
+        return true;
     }
 
     private Map eliminarProducto(Map listaCompraLocal) {
@@ -434,76 +435,81 @@ public class Gui {
     }
 
     private void empleado() {
-        System.out.println("----- Login empleado -----");
-        System.out.println("1. Crear nueva tabla");
-        System.out.println("2. Gestionar inventario");
-        System.out.println("3. Salir");
-        System.out.print("Seleccione una opción: ");
+        int opcion = 0;
+        do {
 
-        int opcion = sc.nextInt();
-        sc.nextLine();
+            System.out.println("----- Login empleado -----");
+            System.out.println("1. Crear nueva tabla");
+            System.out.println("2. Gestionar inventario");
+            System.out.println("3. Salir");
+            System.out.print("Seleccione una opción: ");
 
-        switch (opcion) {
-            case 1:
-                System.out.println("----- Creando tabla -----");
-                System.out.print("Introduzca el nombre de la tabla: ");
-                String nombre = sc.nextLine();
-                Map<String, String> columnas = new HashMap<>();
-                boolean salir = false;
-                while (!salir) {
-                    System.out.print("Introduzca el nombre de la columna: ");
-                    String nombreColumna=sc.nextLine();
-                    System.out.print("Introduzca el tipo de la columna: ");
-                    String tipoColumna=sc.nextLine();
-                    columnas.put(nombreColumna,tipoColumna);
-                    System.out.print("Desea añadir una fila mas? Y/N:");
-                    Character fila= sc.nextLine().toUpperCase().charAt(0);
-                    if (fila.equals('Y')){
-                        salir=true;
-                    } else if (fila.equals('N')) {
+            opcion = sc.nextInt();
+            sc.nextLine();
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("----- Creando tabla -----");
+                    System.out.print("Introduzca el nombre de la tabla: ");
+                    String nombre = sc.nextLine();
+                    Map<String, String> columnas = new HashMap<>();
+                    boolean salir = false;
+                    while (!salir) {
+                        System.out.print("Introduzca el nombre de la columna: ");
+                        String nombreColumna = sc.nextLine();
+                        System.out.print("Introduzca el tipo de la columna: ");
+                        String tipoColumna = sc.nextLine();
+                        columnas.put(nombreColumna, tipoColumna);
+                        System.out.print("Desea añadir una fila mas? Y/N:");
+                        Character fila = sc.nextLine().toUpperCase().charAt(0);
+                        if (fila.equals('Y')) {
+                            salir = false;
+                        } else if (fila.equals('N')) {
+                            salir = true;
+                        } else {
+                            System.out.println("Respuesta incorrecta.");
+                        }
                     }
-                    else {
-                        System.out.println("Respuesta incorrecta.");
+                    try {
+                        gestorBBDD.crearTabla(nombre, columnas);
+                        System.out.println("Tabla creada correctamente.");
+                    } catch (Exception e) {
+                        System.out.println("Error al introducir los datos.");
                     }
-                }
-                try {
-                    gestorBBDD.crearTabla(nombre,columnas);
-                }catch (Exception e){
-                    System.out.println("Error al introducir los datos.");
-                }
-                break;
-            case 2:
-                System.out.println("----- Gestionando inventario -----");
-                int opcionInventario = 0;
-                do {
-                    System.out.println("1. Agregar producto");
-                    System.out.println("2. Eliminar producto");
-                    System.out.println("3. Modificar cantidad producto");
-                    System.out.println("4. Salir");
-                    System.out.print("Seleccione una opción: ");
-                    opcionInventario = sc.nextInt();
-                    sc.nextLine();
-                    switch (opcionInventario) {
-                        case 1:
-                            addProducto();
-                            break;
-                        case 2:
-                            delProducto();
-                            break;
-                        case 3:
-                            modCantidadProducto();
-                            break;
-                        default:
-                            System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
-                    }
-                } while (opcionInventario != 4);
-                break;
-            case 3:
-                System.out.println("----- Saliendo del menú empleado -----");
-                break;
-            default:
-                System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
-        }
+                    break;
+                case 2:
+                    System.out.println("----- Gestionando inventario -----");
+                    int opcionInventario = 0;
+                    do {
+                        System.out.println("1. Agregar producto");
+                        System.out.println("2. Eliminar producto");
+                        System.out.println("3. Modificar cantidad producto");
+                        System.out.println("4. Salir");
+                        System.out.print("Seleccione una opción: ");
+                        opcionInventario = sc.nextInt();
+                        sc.nextLine();
+                        switch (opcionInventario) {
+                            case 1:
+                                addProducto();
+                                break;
+                            case 2:
+                                delProducto();
+                                break;
+                            case 3:
+                                modCantidadProducto();
+                                break;
+                            default:
+                                System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
+                        }
+                    } while (opcionInventario != 4);
+                    break;
+                case 3:
+                    System.out.println("----- Saliendo del menú empleado -----");
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
+            }
+        }while (opcion != 3);
     }
 
     private Boolean modCantidadProducto() {

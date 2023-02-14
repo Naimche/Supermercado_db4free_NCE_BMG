@@ -229,7 +229,7 @@ public class GestorBBDD {
             for (Map.Entry<String, String> entry : campos.entrySet()) {
                 query.append(entry.getKey()).append(" ").append(entry.getValue()).append(", ");
             }
-            query = new StringBuilder(query.substring(0, query.length() - 2));
+            query = new StringBuilder(query.substring(0, query.length()-2));
             query.append(")");
             manager.createNativeQuery(query.toString()).executeUpdate();
             transaction.commit();
