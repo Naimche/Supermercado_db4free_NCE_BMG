@@ -4,6 +4,7 @@ import interfaces.Descuento;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "descuentos")
@@ -16,11 +17,22 @@ public class Descuentos implements Descuento {
     private double porcentajeDescuento;
     @Column(name = "Categoria")
     private String categoria;
+    @ManyToMany(mappedBy = "descuentos", cascade = CascadeType.ALL)
+    private Set<Afiliacion> afiliaciones = null;
+    public Descuentos() {
+    }
 
     public Descuentos(double porcentajeDescuento, String categoria) {
         this.porcentajeDescuento = porcentajeDescuento;
         this.categoria = categoria;
     }
+
+    public Descuentos(double porcentajeDescuento, String categoria, Set<Afiliacion> afiliaciones) {
+        this.porcentajeDescuento = porcentajeDescuento;
+        this.categoria = categoria;
+        this.afiliaciones = afiliaciones;
+    }
+
 
     public double getPorcentajeDescuento() {
         return porcentajeDescuento;

@@ -7,17 +7,36 @@ import model.*;
 import java.util.*;
 
 public class Gui {
-    private Scanner sc = new Scanner(System.in);
-    private GestorBBDD gestorBBDD = new GestorBBDD();
-    private Encriptacion encriptacion = new Encriptacion();
+    private final Scanner sc = new Scanner(System.in);
+    private final GestorBBDD gestorBBDD = new GestorBBDD();
+    private final Encriptacion encriptacion = new Encriptacion();
 
     public void start() {
         try {
-            Cliente cliente = new Cliente("12345678A", "Naim", 12, 'H', 12.0, "adas", "1234");
+            Afiliacion afiliacion = new Afiliacion("SuperAfiliado", null);
+            Set<Afiliacion> af = new HashSet<>();
+            af.add(afiliacion);
+            gestorBBDD.insertarAfiliacion(afiliacion);
+
+            Cliente cliente = new Cliente("12345678A", "Naim", 12, 'H', 12.0, "adas", "1234",af);
             gestorBBDD.insertarCliente(cliente);
             Empleado empleado = new Empleado("12345678A", "Naim", 12, 'H', "persd", 123.0, "tinkywinky");
             gestorBBDD.insertarEmpleado(empleado);
+            Descuentos descuento = new Descuentos(0.12, "Afiliados", af);
 
+            gestorBBDD.insertarDescuento(descuento);
+            Set<Descuentos> descuentos = new HashSet<>();
+            descuentos.add(descuento);
+
+            Set<Cliente> clientes = new HashSet<>();
+            clientes.add(cliente);
+            afiliacion.setDescuentos(descuentos);
+            afiliacion.setClientes(clientes);
+
+
+            gestorBBDD.insertarDescuento(descuento);
+            gestorBBDD.insertarAfiliacion(afiliacion);
+            gestorBBDD.insertarCliente(cliente);
         } catch (Exception e) {
             System.out.println("Error al insertar clienteLogin");
         }
@@ -257,12 +276,13 @@ public class Gui {
             System.out.println("4. Salir");
             if (!listaCompraLocal.isEmpty()) {
                 System.out.println("5. Pagar");
-                System.out.println("----- Total: " + calcularPrecioTotal(listaCompraLocal)+ "€ -----");
+                System.out.println("----- Total: " + calcularPrecioTotal(listaCompraLocal) + "€ -----");
             }
             System.out.print("Seleccione una opción: ");
 
             opcion = sc.nextInt();
-            if(!listaCompraLocal.isEmpty()){
+            sc.nextLine();
+            if (!listaCompraLocal.isEmpty()) {
                 switch (opcion) {
                     case 1:
                         System.out.println("----- Productos -----");
@@ -278,33 +298,12 @@ public class Gui {
                         System.out.println("Gracias por utilizar el sistema.");
                         break;
                     case 5:
-                        System.out.println("----- Pagar -----");
-                        System.out.println("Total: " + calcularPrecioTotal(listaCompraLocal) + "€");
-                        System.out.println("¿Desea pagar? (S/N)");
-                        String respuesta = sc.nextLine().toUpperCase();
-                        if (respuesta.equals("S") || respuesta.equals("SI")) {
-                            String contrasena = sc.nextLine();
-                            if (cliente.getContrasena().equals(Encriptacion.encriptar(contrasena))){
-                                if (cliente.getDinero() >= calcularPrecioTotal(listaCompraLocal)){
-                                    gestorBBDD.updateCliente(cliente);
-
-                                    System.out.println("Compra realizada con éxito.");
-                                    cliente.setDinero(cliente.getDinero() - calcularPrecioTotal(listaCompraLocal));
-                                }
-                                pagar(cliente, listaCompraLocal);
-                            }else {
-                                System.out.println("Contraseña incorrecta.");
-                            }
-
-                        } else {
-                            System.out.println("Compra cancelada.");
-                        }
-
+                        pagar(cliente, listaCompraLocal);
                         break;
                     default:
                         System.out.println("Opción inválida, seleccione una opción válida.");
                 }
-            }else {
+            } else {
                 switch (opcion) {
                     case 1:
                         System.out.println("----- Productos -----");
@@ -324,7 +323,52 @@ public class Gui {
                 }
             }
 
-        } while (opcion != 4); return true;
+        } while (opcion != 4);
+        return true;
+    }
+
+    private void pagar(Cliente cliente, Map listaCompraLocal) throws Exception {
+        System.out.println("----- Pagar -----");
+        //Descuento total
+        double descuentoTotal = 0;
+
+        if (cliente.getAfiliacion() != null) {
+            Set<Afiliacion> afiliaciones = cliente.getAfiliacion();
+            for (Afiliacion afiliacion : afiliaciones) {
+                descuentoTotal += gestorBBDD.selectDescuentoById(afiliacion.getId()).getPorcentajeDescuento();
+            }
+        }
+
+
+        System.out.println("Total sin descuentos: " + calcularPrecioTotal(listaCompraLocal) + "€");
+        System.out.println("Descuento de Afiliaciones: " + descuentoTotal + "%");
+        System.out.println("Total: " + (calcularPrecioTotal(listaCompraLocal) - descuentoTotal) + "€");
+        System.out.println("¿Desea pagar? (S/N)");
+        String respuesta = sc.nextLine().toUpperCase();
+        if (respuesta.equals("S") || respuesta.equals("SI")) {
+            System.out.print("Ingrese su contraseña: ");
+            String contrasena = sc.nextLine();
+            if (cliente.getContrasena().equals(Encriptacion.encriptar(contrasena))) {
+                if (cliente.getDinero() >= calcularPrecioTotal(listaCompraLocal)) {
+                    gestorBBDD.updateCliente(cliente);
+
+                    System.out.println("Compra realizada con éxito.");
+                    cliente.setDinero(cliente.getDinero() - calcularPrecioTotal(listaCompraLocal));
+                    listaCompraLocal.forEach((k, v) -> {
+                        try {
+                            gestorBBDD.updateProductoStock((int) k, (int) v);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            } else {
+                System.out.println("Contraseña incorrecta.");
+            }
+
+        } else {
+            System.out.println("Compra cancelada.");
+        }
     }
 
     private Map eliminarProducto(Map listaCompraLocal) {
@@ -365,7 +409,19 @@ public class Gui {
             int codigo = sc.nextInt();
             sc.nextLine();
             System.out.print("Introduzca la cantidad: ");
+
             int cantidad = sc.nextInt();
+            sc.nextLine();
+            do {
+                if (cantidad >= 0 && cantidad <= gestorBBDD.selectProductoById(codigo).getCantidad()) {
+                    break;
+                } else {
+                    System.out.println("Nuestras existencias para el producto " + gestorBBDD.selectProductoById(codigo).getNombre() + " son de " + gestorBBDD.selectProductoById(codigo).getCantidad() + " unidades.");
+                    System.out.print("Introduzca la cantidad: ");
+                    cantidad = sc.nextInt();
+
+                }
+            } while (true);
             sc.nextLine();
             productos.put(codigo, cantidad);
             StringBuilder listaCompra = new StringBuilder();
@@ -452,23 +508,22 @@ public class Gui {
                 boolean salir = false;
                 while (!salir) {
                     System.out.print("Introduzca el nombre de la columna: ");
-                    String nombreColumna=sc.nextLine();
+                    String nombreColumna = sc.nextLine();
                     System.out.print("Introduzca el tipo de la columna: ");
-                    String tipoColumna=sc.nextLine();
-                    columnas.put(nombreColumna,tipoColumna);
+                    String tipoColumna = sc.nextLine();
+                    columnas.put(nombreColumna, tipoColumna);
                     System.out.print("Desea añadir una fila mas? Y/N:");
-                    Character fila= sc.nextLine().toUpperCase().charAt(0);
-                    if (fila.equals('Y')){
-                        salir=true;
+                    Character fila = sc.nextLine().toUpperCase().charAt(0);
+                    if (fila.equals('Y')) {
+                        salir = true;
                     } else if (fila.equals('N')) {
-                    }
-                    else {
+                    } else {
                         System.out.println("Respuesta incorrecta.");
                     }
                 }
                 try {
-                    gestorBBDD.crearTabla(nombre,columnas);
-                }catch (Exception e){
+                    gestorBBDD.crearTabla(nombre, columnas);
+                } catch (Exception e) {
                     System.out.println("Error al introducir los datos.");
                 }
                 break;

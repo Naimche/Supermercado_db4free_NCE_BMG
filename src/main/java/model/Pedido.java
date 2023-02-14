@@ -26,6 +26,8 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "idDescuento")
     private Descuentos descuento;
+    public Pedido() {
+    }
     public Pedido(Cliente cliente, Empleado empleado, List<Producto> compra ) throws Exception {
             this.cliente = cliente;
             this.empleado = empleado;

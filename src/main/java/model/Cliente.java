@@ -4,6 +4,7 @@ import autentificacion.Encriptacion;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "clientes")
@@ -29,11 +30,14 @@ public class Cliente extends Persona {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "idAfiliacion")
-    private Afiliacion afiliacion;
+    @ManyToMany(mappedBy = "clientes", cascade = CascadeType.ALL)
+    private Set<Afiliacion> afiliaciones = null;
 
     // Constructor
+
+    public Cliente() {
+    }
+
     public Cliente(String dni, String nombre, Integer edad, Character sexo, Double dinero, String direccion, String contrasena) throws Exception {
         this.dni = dni;
         this.nombre = nombre;
@@ -43,13 +47,34 @@ public class Cliente extends Persona {
         this.direccion = direccion;
         this.contrasena = Encriptacion.encriptar(contrasena);
 
+
     }
+    public Cliente(String dni, String nombre, Integer edad, Character sexo, Double dinero, String direccion, String contrasena, Set<Afiliacion> afiliaciones) throws Exception {
+        this.dni = dni;
+        this.nombre = nombre;
+        this.edad = edad;
+        this.sexo = sexo;
+        this.dinero = dinero;
+        this.direccion = direccion;
+        this.contrasena = Encriptacion.encriptar(contrasena);
+        this.afiliaciones = afiliaciones;
+
+    }
+
     public String getUsuario() {
         return dni;
     }
 
+    public Set<Afiliacion> getAfiliacion() {
+        return afiliaciones;
+    }
+
     public void setUsuario(String dni) {
         this.dni = dni;
+    }
+
+    public void setAfiliaciones(Set<Afiliacion> afiliaciones) {
+        this.afiliaciones = afiliaciones;
     }
 
     public String getContrasena() {

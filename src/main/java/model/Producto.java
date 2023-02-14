@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "inventario")
+@Table(name = "productos")
 public class Producto {
     // Atributo para almacenar el nombre del producto
     @Column(name = "nombre")

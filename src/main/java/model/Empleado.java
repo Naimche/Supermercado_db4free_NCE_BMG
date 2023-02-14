@@ -35,6 +35,8 @@ public class Empleado extends Persona {
     private String contrasena;
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
+    public Empleado() {
+    }
 
     public Empleado(String dni, String nombre, Integer edad, Character sexo, String direccion, Double sueldo,String contrasena) throws Exception {
         this.dni = dni;
