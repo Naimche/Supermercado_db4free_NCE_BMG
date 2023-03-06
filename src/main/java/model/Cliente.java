@@ -1,8 +1,6 @@
 package model;
-
+import jakarta.persistence.*;
 import autentificacion.Encriptacion;
-
-import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 

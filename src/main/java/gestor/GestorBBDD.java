@@ -6,8 +6,9 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.hibernate.service.ServiceRegistry;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -21,7 +22,7 @@ public class GestorBBDD {
         properties.setProperty(Environment.USER, "equipo7hlc");
         properties.setProperty(Environment.PASS, "equipo7hlc");
         properties.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
-        properties.setProperty(Environment.SHOW_SQL, "true");
+        properties.setProperty(Environment.SHOW_SQL, "false");
         properties.setProperty(Environment.HBM2DDL_AUTO, "create-drop");
 
 

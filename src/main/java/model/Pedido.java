@@ -3,7 +3,7 @@ package model;
 
 import interfaces.Descuento;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 
@@ -42,6 +42,11 @@ public class Pedido {
             this.descuento = descuento;
     }
 
+    public Pedido(Cliente cliente, List<Producto> compra) throws Exception {
+        this.cliente = cliente;
+        this.productos = compra;
+    }
+
     public Cliente getCliente() {
         return cliente;
     }
@@ -53,6 +58,26 @@ public class Pedido {
         }
         if (descuento!=null) return descuento.aplicarDescuento(precio);
         else return precio;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public Empleado getEmpleado() {
+        return empleado;
+    }
+
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
+    }
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
     }
 
 }

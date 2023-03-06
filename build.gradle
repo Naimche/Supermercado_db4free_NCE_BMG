@@ -21,10 +21,12 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    implementation('org.hibernate:hibernate-core:5.4.24.Final')
+    implementation 'org.hibernate:hibernate-core-jakarta:5.6.15.Final'
     implementation('org.glassfish.jaxb:jaxb-runtime:3.0.2')
     implementation("com.mysql:mysql-connector-j:8.0.32")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+   
+  
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 

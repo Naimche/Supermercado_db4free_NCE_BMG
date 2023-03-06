@@ -18,11 +18,15 @@ public class Gui {
             af.add(afiliacion);
             gestorBBDD.insertarAfiliacion(afiliacion);
 
-            Cliente cliente = new Cliente("12345678A", "Naim", 12, 'H', 12.0, "adas", "1234",af);
+            Cliente cliente = new Cliente("12345678A", "Naim", 12, 'H', 12.0, "Avenida Faje", "1234",af);
             gestorBBDD.insertarCliente(cliente);
-            Empleado empleado = new Empleado("12345678A", "Naim", 12, 'H', "persd", 123.0, "tinkywinky");
+            Empleado empleado = new Empleado("12345689B", "Benja", 12, 'H', "Avenida fake", 123.0, "tinkywinky");
             gestorBBDD.insertarEmpleado(empleado);
             Descuentos descuento = new Descuentos(0.12, "Afiliados", af);
+            Producto producto = new Producto("Coca-Cola",0.3 , 0.5, 12);
+            Producto productso = new Producto("Galleta dinosaurio",1 , 4, 30);
+            gestorBBDD.insertarProducto(producto);
+            gestorBBDD.insertarProducto(productso);
 
             gestorBBDD.insertarDescuento(descuento);
             Set<Descuentos> descuentos = new HashSet<>();
@@ -243,8 +247,7 @@ public class Gui {
     private void Cliente(Cliente cliente) throws Exception {
         System.out.println("----- Login cliente -----");
         System.out.println("1. Realizar compra");
-        System.out.println("2. Pagar");
-        System.out.println("3. Salir");
+        System.out.println("0. Salir");
         System.out.print("Seleccione una opción: ");
 
         int opcion = sc.nextInt();
@@ -254,11 +257,8 @@ public class Gui {
             case 1:
                 realizarCompra(cliente);
                 break;
-            case 2:
-                // TODO: 2/12/2023 Pagar
-                break;
-            case 3:
-                // TODO: 2/12/2023 Salir
+            case 0:
+                System.out.println("Saliendo...");
                 break;
             default:
                 System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
@@ -273,11 +273,15 @@ public class Gui {
             System.out.println("1. Ver productos");
             System.out.println("2. Añadir producto");
             System.out.println("3. Eliminar producto");
-            System.out.println("4. Salir");
             if (!listaCompraLocal.isEmpty()) {
-                System.out.println("5. Pagar");
+                System.out.println("4. Pagar");
+                System.out.println("0. Salir");
+                System.out.println("----- Lista de la compra -----");
                 System.out.println("----- Total: " + calcularPrecioTotal(listaCompraLocal) + "€ -----");
+            }else {
+                System.out.println("0. Salir");
             }
+
             System.out.print("Seleccione una opción: ");
 
             opcion = sc.nextInt();
@@ -294,10 +298,10 @@ public class Gui {
                     case 3:
                         listaCompraLocal = eliminarProducto(listaCompraLocal);
                         break;
-                    case 4:
+                    case 0:
                         System.out.println("Gracias por utilizar el sistema.");
                         break;
-                    case 5:
+                    case 4:
                         pagar(cliente, listaCompraLocal);
                         break;
                     default:
@@ -325,7 +329,7 @@ public class Gui {
 
         } while (opcion != 4);
         return true;
-    }
+}
 
     private void pagar(Cliente cliente, Map listaCompraLocal) throws Exception {
         System.out.println("----- Pagar -----");
@@ -342,25 +346,40 @@ public class Gui {
 
         System.out.println("Total sin descuentos: " + calcularPrecioTotal(listaCompraLocal) + "€");
         System.out.println("Descuento de Afiliaciones: " + descuentoTotal + "%");
-        System.out.println("Total: " + (calcularPrecioTotal(listaCompraLocal) - descuentoTotal) + "€");
+        System.out.println("Total: " + (calcularPrecioTotal(listaCompraLocal) -(calcularPrecioTotal(listaCompraLocal) * descuentoTotal)) + "€");
         System.out.println("¿Desea pagar? (S/N)");
         String respuesta = sc.nextLine().toUpperCase();
         if (respuesta.equals("S") || respuesta.equals("SI")) {
             System.out.print("Ingrese su contraseña: ");
             String contrasena = sc.nextLine();
             if (cliente.getContrasena().equals(Encriptacion.encriptar(contrasena))) {
-                if (cliente.getDinero() >= calcularPrecioTotal(listaCompraLocal)) {
+                if (cliente.getDinero() >= calcularPrecioTotal(listaCompraLocal) -(calcularPrecioTotal(listaCompraLocal) * descuentoTotal)) {
                     gestorBBDD.updateCliente(cliente);
 
+                    cliente.setDinero(cliente.getDinero() - calcularPrecioTotal(listaCompraLocal) -(calcularPrecioTotal(listaCompraLocal) * descuentoTotal));
                     System.out.println("Compra realizada con éxito.");
-                    cliente.setDinero(cliente.getDinero() - calcularPrecioTotal(listaCompraLocal));
+                    List productos = new ArrayList();
+
                     listaCompraLocal.forEach((k, v) -> {
                         try {
+                            productos.add(gestorBBDD.selectProductoById((int) k));
                             gestorBBDD.updateProductoStock((int) k, (int) v);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
                     });
+                    try {
+                        Pedido ped = new Pedido(cliente, productos);
+                        ped.setProductos(productos);
+                        ped.setCliente(cliente);
+                        gestorBBDD.insertarPedido(ped);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }else {
+                    System.out.println("No tienes saldo suficiente.");
+                    realizarCompra(cliente);
                 }
             } else {
                 System.out.println("Contraseña incorrecta.");
@@ -411,7 +430,7 @@ public class Gui {
             System.out.print("Introduzca la cantidad: ");
 
             int cantidad = sc.nextInt();
-            sc.nextLine();
+          
             do {
                 if (cantidad >= 0 && cantidad <= gestorBBDD.selectProductoById(codigo).getCantidad()) {
                     break;
