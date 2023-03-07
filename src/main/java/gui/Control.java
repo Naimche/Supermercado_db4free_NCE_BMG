@@ -6,120 +6,61 @@ import model.*;
 
 import java.util.*;
 
-public class Gui {
+public class Control {
     private final Scanner sc = new Scanner(System.in);
-    private final GestorBBDD gestorBBDD = new GestorBBDD();
+    private static final GestorBBDD gestorBBDD = GestorBBDD.getInstance();
     private final Encriptacion encriptacion = new Encriptacion();
+    private static boolean methodInitialized = false;
+    static {
+        initializeMethod();
+    }
+    
+    private static Control instance = null;
+    private Control() {}
 
-    public void start() {
-        try {
-            Afiliacion afiliacion = new Afiliacion("SuperAfiliado", null);
-            Set<Afiliacion> af = new HashSet<>();
-            af.add(afiliacion);
-            gestorBBDD.insertarAfiliacion(afiliacion);
-
-            Cliente cliente = new Cliente("12345678A", "Naim", 12, 'H', 12.0, "Avenida Faje", "1234",af);
-            gestorBBDD.insertarCliente(cliente);
-            Empleado empleado = new Empleado("12345689B", "Benja", 12, 'H', "Avenida fake", 123.0, "tinkywinky");
-            gestorBBDD.insertarEmpleado(empleado);
-            Descuentos descuento = new Descuentos(0.12, "Afiliados", af);
-            Producto producto = new Producto("Coca-Cola",0.3 , 0.5, 12);
-            Producto productso = new Producto("Galleta dinosaurio",1 , 4, 30);
-            gestorBBDD.insertarProducto(producto);
-            gestorBBDD.insertarProducto(productso);
-
-            gestorBBDD.insertarDescuento(descuento);
-            Set<Descuentos> descuentos = new HashSet<>();
-            descuentos.add(descuento);
-
-            Set<Cliente> clientes = new HashSet<>();
-            clientes.add(cliente);
-            afiliacion.setDescuentos(descuentos);
-            afiliacion.setClientes(clientes);
-
-
-            gestorBBDD.insertarDescuento(descuento);
-            gestorBBDD.insertarAfiliacion(afiliacion);
-            gestorBBDD.insertarCliente(cliente);
-        } catch (Exception e) {
-            System.out.println("Error al insertar clienteLogin");
+    public static Control getInstance() {
+        if (instance == null) {
+            instance = new Control();
         }
+        return instance;
+    }
+    public static void initializeMethod() {
+        if (!methodInitialized) {
+        	try {
+                
+                Afiliacion afiliacion = new Afiliacion("SuperAfiliado", null);
+                Set<Afiliacion> af = new HashSet<>();
+                af.add(afiliacion);
+                gestorBBDD.insertarAfiliacion(afiliacion);
 
-        int opcion = 0;
-        do {
-            System.out.println("----- Menú Principal -----");
-            System.out.println("1. Cliente");
-            System.out.println("2. Empleado");
-            System.out.println("3. Salir");
-            System.out.print("Seleccione una opción: ");
+                Cliente cliente = new Cliente("12345678A", "Naim", 12, 'H', 12.0, "Avenida Faje", "1234",af);
+                gestorBBDD.insertarCliente(cliente);
+                Empleado empleado = new Empleado("12345689B", "Benja", 12, 'H', "Avenida fake", 123.0, "tinkywinky");
+                gestorBBDD.insertarEmpleado(empleado);
+                Descuentos descuento = new Descuentos(0.12, "Afiliados", af);
+                Producto producto = new Producto("Coca-Cola",0.3 , 0.5, 12);
+                Producto productso = new Producto("Galleta dinosaurio",1 , 4, 30);
+                gestorBBDD.insertarProducto(producto);
+                gestorBBDD.insertarProducto(productso);
 
-            opcion = sc.nextInt();
-            sc.nextLine();
+                gestorBBDD.insertarDescuento(descuento);
+                Set<Descuentos> descuentos = new HashSet<>();
+                descuentos.add(descuento);
 
-            switch (opcion) {
-                case 1:
-                    try {
-                        do {
-                            System.out.println("1. Registrarme");
-                            System.out.println("2. Logearme");
-                            System.out.println("0. Salir");
-                            System.out.print("Seleccione una opción: ");
-                            opcion = sc.nextInt();
-                            sc.nextLine();
-                            switch (opcion) {
-                                case 1:
-                                    registrarCliente();
-                                    break;
-                                case 2:
-                                    loginCliente();
-                                    break;
-                                case 0:
-                                    System.out.println("Gracias por utilizar el sistema.");
-                                    break;
-                                default:
-                                    System.out.println("Opción inválida, seleccione una opción válida.");
-                            }
-                        } while (opcion != 0);
-                    } catch (Exception e) {
-                        System.out.println("Error al iniciar sesión.");
-                    }
-                    break;
-                case 2:
-
-                    int opcionEmpleado = 0;
-                    do {
-                        System.out.println("1. Iniciar sesión como empleado");
-                        System.out.println("2. Registrar empleado");
-                        opcionEmpleado = sc.nextInt();
-                        sc.nextLine();
-                        switch (opcionEmpleado) {
-                            case 1:
-                                try {
-                                    if (empleadoLogin()) {
-                                        empleado();
-                                    }
-                                    break;
-                                } catch (Exception e) {
-                                    System.out.println("Error al iniciar sesión.");
-                                    break;
-                                }
+                Set<Cliente> clientes = new HashSet<>();
+                clientes.add(cliente);
+                afiliacion.setDescuentos(descuentos);
+                afiliacion.setClientes(clientes);
 
 
-                            case 2:
-                                registrarEmpleado();
-                                break;
-                            default:
-                                System.out.println("Opción invalida, selecciona 1 o 2");
-                        }
-                    } while (opcionEmpleado == 1 || opcionEmpleado == 2);
-                    break;
-                case 3:
-                    System.out.println("Saliendo del sistema...");
-                    break;
-                default:
-                    System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
+                gestorBBDD.insertarDescuento(descuento);
+                gestorBBDD.insertarAfiliacion(afiliacion);
+                gestorBBDD.insertarCliente(cliente);
+            } catch (Exception e) {
+                System.out.println("Error al insertar clienteLogin");
             }
-        } while (opcion != 3);
+            methodInitialized = true;
+        }
     }
 
     private Boolean registrarEmpleado() {
@@ -226,22 +167,18 @@ public class Gui {
 
     }
 
-    private boolean loginCliente() throws Exception {
+    boolean loginCliente(String dni, String contrasena) throws Exception {
 
-        System.out.println("----- Login cliente -----");
-        System.out.print("DNI: ");
-        String dni = sc.nextLine();
-
-        System.out.print("Contraseña: ");
-        String contrasena = sc.nextLine();
-        System.out.println("Comprobando credenciales...");
         if (gestorBBDD.selectClienteLoginByDni(dni).getContrasena().equals(Encriptacion.encriptar(contrasena))) {
-            Cliente(gestorBBDD.selectClienteLoginByDni(dni));
             return true;
         } else {
             System.out.println("DNI o contraseña incorrectos.");
             return false;
         }
+    }
+    
+    Cliente cliente(String dni) {
+		return gestorBBDD.selectClienteByDni(dni);
     }
 
     private void Cliente(Cliente cliente) throws Exception {

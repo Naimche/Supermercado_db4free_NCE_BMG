@@ -15,33 +15,47 @@ import java.util.Properties;
 
 
 public class GestorBBDD {
-    public EntityManager initialize() {
-        Properties properties = new Properties();
-        properties.setProperty(Environment.DRIVER, "com.mysql.jdbc.Driver");
-        properties.setProperty(Environment.URL, "jdbc:mysql://db4free.net:3306/equipo7hlc");
-        properties.setProperty(Environment.USER, "equipo7hlc");
-        properties.setProperty(Environment.PASS, "equipo7hlc");
-        properties.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
-        properties.setProperty(Environment.SHOW_SQL, "false");
-        properties.setProperty(Environment.HBM2DDL_AUTO, "create-drop");
+	private EntityManager manager = initializeMethod();
+    private EntityTransaction transaction = manager.getTransaction();
+	private static GestorBBDD instance = null;
+    private boolean methodInitialized = false;
+
+    public static GestorBBDD getInstance() {
+        if (instance == null) {
+            instance = new GestorBBDD();
+        }
+        return instance;
+    }
+    public EntityManager initializeMethod() {
+        if (!methodInitialized) {
+        	Properties properties = new Properties();
+            properties.setProperty(Environment.DRIVER, "com.mysql.jdbc.Driver");
+            properties.setProperty(Environment.URL, "jdbc:mysql://db4free.net:3306/equipo7hlc");
+            properties.setProperty(Environment.USER, "equipo7hlc");
+            properties.setProperty(Environment.PASS, "equipo7hlc");
+            properties.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
+            properties.setProperty(Environment.SHOW_SQL, "false");
+            properties.setProperty(Environment.HBM2DDL_AUTO, "create-drop");
 
 
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                .applySettings(properties)
-                .build();
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(properties)
+                    .build();
 
-        EntityManager manager = new HibernatePersistenceProvider()
-                .createEntityManagerFactory("supermercado", properties).createEntityManager();
+            EntityManager manager = new HibernatePersistenceProvider()
+                    .createEntityManagerFactory("supermercado", properties).createEntityManager();
 
 
-        //Entorno de pruebas
-
-        return manager;
+            //Entorno de pruebas
+            methodInitialized = true;
+            return manager;
+            
+        }
+		return manager;
     }
 
-    private EntityManager manager = initialize();
-    private EntityTransaction transaction = manager.getTransaction();
 
+    
     public GestorBBDD() {
         this.manager = manager;
     }
